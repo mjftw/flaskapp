@@ -1,8 +1,6 @@
-from webapp import app
+from webapp import app, db
+from webapp.models import User
 
-def main():
-    pass
-
-if __name__ == "__main__":
-    main()
-
+@app.shell_context_processor
+def make_shell_context():
+    return {'db': db, 'User': User}

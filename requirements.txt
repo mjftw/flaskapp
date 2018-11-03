@@ -1,3 +1,5 @@
 # pip3 install -r requirements.txt
 flask
 flask-wtf
+flask-sqlalchemy
+flask-migrate
