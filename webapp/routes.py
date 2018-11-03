@@ -1,9 +1,9 @@
 from flask import render_template, flash, redirect, url_for, request
-from flask_login import current_user, login_user, logout_user
+from flask_login import current_user, login_user, logout_user, login_required
 
 from webapp import app
 from webapp import db
-from webapp.forms import LoginForm, RegisterForm
+from webapp.forms import LoginForm, RegisterForm, ChangeUserEmailForm, DeleteUserForm
 from webapp.models import User
 
 
@@ -22,6 +22,8 @@ def register():
         user.password_set(form.password.data)
         db.session.add(user)
         db.session.commit()
+        logout_user()
+        login_user(user)
         flash("New user {} created!".format(user.username))
         return redirect(url_for('index'))
     return render_template('register.html', title='Register', form=form)
@@ -49,3 +51,40 @@ def logout():
     logout_user()
     flash('Logged out')
     return redirect(url_for('index'))
+
+@app.route('/user/<username>', methods=['GET', 'POST'])
+@login_required
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    edit = request.args.get('edit')
+
+    if edit == "email":
+        form = ChangeUserEmailForm()
+        if form.validate_on_submit():
+            user.email = form.email.data
+            db.session.add(user)
+            db.session.commit()
+            flash("Email address changed")
+            return redirect(url_for('user', username=username))
+
+    elif edit == "delete":
+        form = DeleteUserForm()
+        if form.validate_on_submit():
+            logout_user()
+            db.session.delete(user)
+            db.session.commit()
+            flash("Account deleted")
+            return redirect(url_for('index'))
+    else:
+        form = None
+
+    return render_template(
+        'user.html', title='Account', user=user, edit=edit, form=form)
+
+@app.route('/user/<username>/change-password')
+@login_required
+def user_change_password(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    return render_template(
+        'construction.html', title='Account Settings')
+
