@@ -9,20 +9,22 @@
     <body>
         <div>
             <a href="{{ url_for('index') }}">Home</a>
-            <a href="{{ url_for('login') }}">Login</a>
+            {% if current_user.is_anonymous %}
+                <a href="{{ url_for('login') }}">Login</a>
+            {% else %}
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% endif %}
         </div>
         <hr>
-        {% block content %}{% endblock %}
         {% with messages = get_flashed_messages() %}
             {% if messages %}
-                <hr>
-                <h2>Messages:</h2>
-                <ul>
-                    {% for message in messages %}
-                        <li>{{ message }}</li>
-                    {% endfor %}
-                </ul>
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
             {% endif %}
         {% endwith %}
+        {% block content %}{% endblock %}
     </body>
 </html>
