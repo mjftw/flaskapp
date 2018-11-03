@@ -12,5 +12,5 @@ fi
 if [ -z "$1" ]; then
     flask run
 else
-    flask $@
+    flask "$@"
 fi
