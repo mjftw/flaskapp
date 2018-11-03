@@ -16,7 +16,7 @@ class RegisterForm(FlaskForm):
     username = StringField('Username', validators=[
         DataRequired(),
         Length(min=4, max=32), Regexp(
-            '^[a-zA-Z0-9].+$', message='Username may not contain special characters')])
+            '^[a-zA-Z0-9_]+$', message="Username must not contain any special characters except '_'")])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[
         DataRequired(), Length(min=8, max=128)])
