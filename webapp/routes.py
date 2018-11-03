@@ -1,15 +1,30 @@
-from flask import render_template, flash, redirect, url_for
+from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user
 
 from webapp import app
-from webapp.forms import LoginForm
+from webapp import db
+from webapp.forms import LoginForm, RegisterForm
 from webapp.models import User
+
 
 @app.route('/')
 @app.route('/index')
 def index():
-    user = {'username': 'Merlin'}
     return render_template('index.html', title='Home')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = RegisterForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data)
+        user.password_set(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash("New user {} created!".format(user.username))
+        return redirect(url_for('index'))
+    return render_template('register.html', title='Register', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
