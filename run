@@ -1,10 +1,16 @@
+#!/bin/bash
+
 export FLASK_APP=flask_main.py
 SECRETS="secrets.txt"
 
 if [ -s ${SECRETS} ]; then
     export FLASK_SECRET_KEY=$(cat secrets.txt)
 else
-    undef FLASK_SECRET_KEY
+    unset FLASK_SECRET_KEY
 fi
 
-flask run
+if [ -z "$1" ]; then
+    flask run
+else
+    flask $@
+fi
