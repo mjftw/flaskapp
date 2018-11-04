@@ -8,20 +8,7 @@
         {% if current_user.username == user.username %}
             <a href="{{ url_for('user', username=user.username, edit='email') }}"> edit</a>
             {% if edit == 'email' %}
-                <form action="", method="POST">
-                    {{ form.hidden_tag() }}
-                    {{ form.new_email.label }}<br>
-                    {{ form.new_email(size=32) }}<br>
-                    {% for error in form.new_email.errors %}
-                        <span style="color: red;">[{{ error }}]</span><br>
-                    {% endfor %}
-                    {{ form.password.label }}<br>
-                    {{ form.password(size=32) }}<br>
-                    {% for error in form.password.errors %}
-                        <span style="color: red;">[{{ error }}]</span><br>
-                    {% endfor %}
-                    {{ form.submit() }}
-                </form>
+                {% include '_quick_form.html' %}
             {% endif %}
         {% endif %}
         <br>
@@ -31,36 +18,10 @@
             <div>
                 {% if edit == 'delete' %}
                     <br>Are you sure you want to delete your account? This can NOT be undone.<br><br>
-                    <form action="", method="POST">
-                        {{ form.hidden_tag() }}
-                        {{ form.password.label }}<br>
-                        {{ form.password(size=32) }}<br>
-                        {% for error in form.password.errors %}
-                            <span style="color: red;">[{{ error }}]</span><br>
-                        {% endfor %}
-                        {{ form.submit() }}<br>
-                        <a href="{{ url_for('user', username=user.username, edit='password') }}">Change Password</a>
-                    </form>
+                        {% include '_quick_form.html' %}
+                    <a href="{{ url_for('user', username=user.username, edit='password') }}">Change Password</a>
                 {% elif edit == 'password' %}
-                    <form action="", method="POST">
-                        {{ form.hidden_tag() }}
-                        {{ form.new_password.label }}<br>
-                        {{ form.new_password(size=32) }}<br>
-                        {% for error in form.new_password.errors %}
-                            <span style="color: red;">[{{ error }}]</span><br>
-                        {% endfor %}
-                        {{ form.new_password2.label }}<br>
-                        {{ form.new_password2(size=32) }}<br>
-                        {% for error in form.new_password2.errors %}
-                            <span style="color: red;">[{{ error }}]</span><br>
-                        {% endfor %}
-                        {{ form.password.label }}<br>
-                        {{ form.password(size=32) }}<br>
-                        {% for error in form.password.errors %}
-                            <span style="color: red;">[{{ error }}]</span><br>
-                        {% endfor %}
-                        {{ form.submit() }}<br>
-                    </form>
+                    {% include '_quick_form.html' %}
                     <a href="{{ url_for('user', username=user.username, edit='delete') }}">Delete Account</a><br>
                 {% else %}
                     <a href="{{ url_for('user', username=user.username, edit='password') }}">Change Password</a><br>

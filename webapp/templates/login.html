@@ -4,9 +4,5 @@
 {% block app_content %}
     <h1>Sign In</h1>
     <p>New User? <a href="{{ url_for('register') }}">Register</a></p>
-        <div class="row">
-            <div class="col-md-4">
-                {{ wtf.quick_form(form) }}
-            </div>
-        </div>
+    {% include '_quick_form.html' %}
 {% endblock%}
