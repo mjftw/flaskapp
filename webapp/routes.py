@@ -19,7 +19,10 @@ def register():
         return redirect(url_for('index'))
     form = RegisterForm()
     if form.validate_on_submit():
-        user = User(username=form.new_username.data, email=form.new_email.data)
+        user = User(
+            username=form.new_username.data,
+            email=form.new_email.data,
+            is_admin=False)
         user.password_set(form.new_password.data)
 
         max_id = pow(2, 32)
@@ -98,3 +101,7 @@ def user(username):
 
     return render_template(
         'user.html', title='Account', user=user, edit=edit, form=form)
+
+@app.route('/admin')
+def admin():
+    return render_template('construction.html', title='Admin')

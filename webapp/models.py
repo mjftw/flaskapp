@@ -10,11 +10,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(128), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-
-    @property
-    def is_admin(self):
-        access = UserAccess.query.filter_by(user_id=self.id).first()
-        return True if access and access.admin else False
+    is_admin = db.Column(db.Boolean)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -27,10 +23,6 @@ class User(UserMixin, db.Model):
             return False
         return check_password_hash(self.password_hash, password)
 
-class UserAccess(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    admin = db.Column(db.Boolean)
 
 class UserID(db.Model):
     id = db.Column(db.Integer, primary_key=True)
