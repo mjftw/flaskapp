@@ -58,25 +58,25 @@ def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     edit = request.args.get('edit')
 
-    if edit == "email":
-        form = ChangeUserEmailForm()
-        if form.validate_on_submit():
-            user.email = form.email.data
-            db.session.add(user)
-            db.session.commit()
-            flash("Email address changed")
-            return redirect(url_for('user', username=username))
+    form = None
+    if current_user.username == user.username:
+        if edit == "email":
+            form = ChangeUserEmailForm()
+            if form.validate_on_submit():
+                user.email = form.email.data
+                db.session.add(user)
+                db.session.commit()
+                flash("Email address changed")
+                return redirect(url_for('user', username=username))
 
-    elif edit == "delete":
-        form = DeleteUserForm()
-        if form.validate_on_submit():
-            logout_user()
-            db.session.delete(user)
-            db.session.commit()
-            flash("Account deleted")
-            return redirect(url_for('index'))
-    else:
-        form = None
+        elif edit == "delete":
+            form = DeleteUserForm()
+            if form.validate_on_submit():
+                logout_user()
+                db.session.delete(user)
+                db.session.commit()
+                flash("Account deleted")
+                return redirect(url_for('index'))
 
     return render_template(
         'user.html', title='Account', user=user, edit=edit, form=form)
