@@ -103,5 +103,12 @@ def user(username):
         'user.html', title='Account', user=user, edit=edit, form=form)
 
 @app.route('/admin')
+@login_required
 def admin():
+    if not current_user.is_admin:
+        return redirect(url_for('noauth'))
     return render_template('construction.html', title='Admin')
+
+@app.route('/noauth')
+def noauth():
+    return render_template('noauth.html', title='Unauthorised access!')
