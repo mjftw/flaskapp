@@ -111,4 +111,4 @@ def admin():
 
 @app.route('/noauth')
 def noauth():
-    return render_template('noauth.html', title='Unauthorised access!')
+    return render_template('errors/noauth.html', title='Unauthorised access!')
