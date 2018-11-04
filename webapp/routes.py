@@ -98,11 +98,3 @@ def user(username):
 
     return render_template(
         'user.html', title='Account', user=user, edit=edit, form=form)
-
-@app.route('/user/<username>/change-password')
-@login_required
-def user_change_password(username):
-    user = User.query.filter_by(username=username).first_or_404()
-    return render_template(
-        'construction.html', title='Account Settings')
-
