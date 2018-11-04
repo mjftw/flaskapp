@@ -102,12 +102,10 @@ def user(username):
     return render_template(
         'user.html', title='Account', user=user, edit=edit, form=form)
 
+# Dummy route is here so that we can link to the flask-admin page
 @app.route('/admin')
-@login_required
 def admin():
-    if not current_user.is_admin:
-        return redirect(url_for('noauth'))
-    return render_template('construction.html', title='Admin')
+    pass
 
 @app.route('/noauth')
 def noauth():
