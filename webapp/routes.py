@@ -1,10 +1,11 @@
+from random import randint
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 
 from webapp import app
 from webapp import db
 from webapp.forms import LoginForm, RegisterForm, ChangeUserEmailForm, DeleteUserForm
-from webapp.models import User
+from webapp.models import User, UserID
 
 
 @app.route('/')
@@ -20,8 +21,16 @@ def register():
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
         user.password_set(form.password.data)
+
+        max_id = pow(2, 32)
+        user.id = randint(0, max_id)
+        while UserID.query.filter_by(user_id=user.id).first():
+            user.id = randint(0, max_id)
+
+        db.session.add(UserID(user_id=user.id))
         db.session.add(user)
         db.session.commit()
+
         logout_user()
         login_user(user)
         flash("New user {} created!".format(user.username))
