@@ -6,7 +6,7 @@ from webapp.models import User
 
 
 class SetUsernameMixin():
-    username = StringField('Username', validators=[
+    new_username = StringField('Username', validators=[
         DataRequired(), Length(min=4, max=32), Regexp(
         '^[a-zA-Z0-9_]+$', message="Username must not contain any special characters except '_'")])
 
@@ -17,7 +17,7 @@ class SetUsernameMixin():
                 username))
 
 class SetEmailMixin():
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    new_email = StringField('Email', validators=[DataRequired(), Email()])
 
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
@@ -26,14 +26,14 @@ class SetEmailMixin():
 
 
 class SetPasswordMixin():
-    password = PasswordField('Password', validators=[
+    new_password = PasswordField('Password', validators=[
         DataRequired(), Length(min=8, max=128)])
-    password2 = PasswordField('Repeat Password', validators=[
-        DataRequired(), EqualTo('password')])
+    new_password2 = PasswordField('Repeat Password', validators=[
+        DataRequired(), EqualTo('new_password')])
 
 
 class CheckUserPasswordMixin():
-    password = PasswordField('Confirm Password', validators=[DataRequired()])
+    password = PasswordField('Current Password', validators=[DataRequired()])
 
     def validate_password(self, password):
         if current_user.is_anonymous:
@@ -60,6 +60,8 @@ class ChangeUserEmailForm(FlaskForm, SetEmailMixin, CheckUserPasswordMixin):
 class ChangeUserUsernameForm(FlaskForm, SetUsernameMixin, CheckUserPasswordMixin):
     submit = SubmitField('Confirm')
 
+class ChangeUserPasswordForm(FlaskForm, SetPasswordMixin, CheckUserPasswordMixin):
+    submit = SubmitField('Confirm')
 
 class DeleteUserForm(FlaskForm, CheckUserPasswordMixin):
     submit = SubmitField('Delete Account')

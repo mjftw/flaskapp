@@ -7,12 +7,12 @@
         Email: {{ user.email }}
         {% if current_user.username == user.username %}
             <a href="{{ url_for('user', username=user.username, edit='email') }}"> edit</a>
-            {% if form and edit == 'email' %}
+            {% if edit == 'email' %}
                 <form action="", method="POST">
                     {{ form.hidden_tag() }}
-                    New {{ form.email.label }}<br>
-                    {{ form.email(size=32) }}<br>
-                    {% for error in form.email.errors %}
+                    {{ form.new_email.label }}<br>
+                    {{ form.new_email(size=32) }}<br>
+                    {% for error in form.new_email.errors %}
                         <span style="color: red;">[{{ error }}]</span><br>
                     {% endfor %}
                     {{ form.password.label }}<br>
@@ -29,7 +29,7 @@
     {% if current_user.username == user.username %}
         <p>
             <div>
-                {% if form and edit == 'delete' %}
+                {% if edit == 'delete' %}
                     <br>Are you sure you want to delete your account? This can NOT be undone.<br><br>
                     <form action="", method="POST">
                         {{ form.hidden_tag() }}
@@ -38,12 +38,34 @@
                         {% for error in form.password.errors %}
                             <span style="color: red;">[{{ error }}]</span><br>
                         {% endfor %}
-                        {{ form.submit() }}
+                        {{ form.submit() }}<br>
+                        <a href="{{ url_for('user', username=user.username, edit='password') }}">Change Password</a>
                     </form>
+                {% elif edit == 'password' %}
+                    <form action="", method="POST">
+                        {{ form.hidden_tag() }}
+                        {{ form.new_password.label }}<br>
+                        {{ form.new_password(size=32) }}<br>
+                        {% for error in form.new_password.errors %}
+                            <span style="color: red;">[{{ error }}]</span><br>
+                        {% endfor %}
+                        {{ form.new_password2.label }}<br>
+                        {{ form.new_password2(size=32) }}<br>
+                        {% for error in form.new_password2.errors %}
+                            <span style="color: red;">[{{ error }}]</span><br>
+                        {% endfor %}
+                        {{ form.password.label }}<br>
+                        {{ form.password(size=32) }}<br>
+                        {% for error in form.password.errors %}
+                            <span style="color: red;">[{{ error }}]</span><br>
+                        {% endfor %}
+                        {{ form.submit() }}<br>
+                    </form>
+                    <a href="{{ url_for('user', username=user.username, edit='delete') }}">Delete Account</a><br>
                 {% else %}
-                    <a href="{{ url_for('user', username=user.username, edit='delete') }}">Delete Account</a>
+                    <a href="{{ url_for('user', username=user.username, edit='password') }}">Change Password</a><br>
+                    <a href="{{ url_for('user', username=user.username, edit='delete') }}">Delete Account</a><br>
                 {% endif %}
-                <a href="{{ url_for('user_change_password', username=user.username) }}">Change Password</a>
             </div>
         </p>
     {% endif %}

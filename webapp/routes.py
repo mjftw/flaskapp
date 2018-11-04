@@ -4,7 +4,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 
 from webapp import app
 from webapp import db
-from webapp.forms import LoginForm, RegisterForm, ChangeUserEmailForm, DeleteUserForm
+from webapp.forms import LoginForm, RegisterForm, ChangeUserEmailForm, ChangeUserPasswordForm, DeleteUserForm
 from webapp.models import User, UserID
 
 
@@ -19,8 +19,8 @@ def register():
         return redirect(url_for('index'))
     form = RegisterForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
-        user.password_set(form.password.data)
+        user = User(username=form.new_username.data, email=form.new_email.data)
+        user.password_set(form.new_password.data)
 
         max_id = pow(2, 32)
         user.id = randint(0, max_id)
@@ -72,10 +72,19 @@ def user(username):
         if edit == "email":
             form = ChangeUserEmailForm()
             if form.validate_on_submit():
-                user.email = form.email.data
+                user.email = form.new_email.data
                 db.session.add(user)
                 db.session.commit()
                 flash("Email address changed")
+                return redirect(url_for('user', username=username))
+
+        elif edit == "password":
+            form = ChangeUserPasswordForm()
+            if form.validate_on_submit():
+                user.password_set(form.new_password.data)
+                db.session.add(user)
+                db.session.commit()
+                flash("Password changed")
                 return redirect(url_for('user', username=username))
 
         elif edit == "delete":
