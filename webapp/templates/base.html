@@ -1,34 +1,29 @@
-<html>
-    <head>
-        {% if title %}
+{% extends 'bootstrap/base.html' %}
+
+{% block styles %}
+    <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+{% endblock %}
+
+{% block title%}
+    {% if title %}
         <title> Flaskapp - {{ title }}</title>
-        {% else %}
-        <title> Welcome to Flaskapp Alpha!</title>
-        {% endif %}
-    </head>
-    <body>
-        <div>
-            <a href="{{ url_for('index') }}">Home</a>
-            {% if current_user.is_anonymous %}
-                <a href="{{ url_for('login') }}">Login</a>
-            {% else %}
-                <a href="{{ url_for('user', username=current_user.username) }}">Account</a>
-                <a href="{{ url_for('logout') }}">Logout</a>
-                {% if current_user.is_admin %}
-                    <a href="{{ url_for('admin') }}">Admin</a>
-                {% endif %}
-            {% endif %}
-        </div>
-        <hr>
+    {% else %}
+        <title> Flaskapp </title>
+    {% endif %}
+{% endblock %}
+{% block navbar %}
+    {% include '_navbar.html' %}
+{% endblock %}
+{% block content %}
+    <div class="container">
         {% with messages = get_flashed_messages() %}
             {% if messages %}
-            <ul>
                 {% for message in messages %}
-                    <li>{{ message }}</li>
+                    <div class="alert alert-info" role="alert">{{ message }}</div>
                 {% endfor %}
-            </ul>
             {% endif %}
         {% endwith %}
-        {% block content %}{% endblock %}
-    </body>
-</html>
+        {% block app_content %}{% endblock %}
+    </div>
+{% endblock %}
