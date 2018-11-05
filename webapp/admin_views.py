@@ -4,10 +4,9 @@ from flask_login import current_user
 
 from webapp.errors import unauthorized
 
-
 class UserIsAdminIndexView(AdminIndexView):
     def is_accessible(self):
-        return current_user.is_admin
+        return hasattr(current_user, 'is_admin') and current_user.is_admin
 
     def inaccessible_callback(self, name, **kwargs):
         return unauthorized()
@@ -15,7 +14,7 @@ class UserIsAdminIndexView(AdminIndexView):
 
 class UserIsAdminModelView(ModelView):
     def is_accessible(self):
-        return current_user.is_admin
+        return hasattr(current_user, 'is_admin') and current_user.is_admin
 
     def inaccessible_callback(self, name, **kwargs):
         return unauthorized()
