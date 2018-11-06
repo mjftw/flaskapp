@@ -100,7 +100,8 @@ def user(username=''):
 # Dummy route is here so that we can link to the flask-admin page
 @app.route('/admin')
 def admin():
-    pass
+    flash('Admin panel unavailable')
+    return redirect(url_for('index'))
 
 @app.route('/noauth')
 def noauth():
