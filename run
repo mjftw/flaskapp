@@ -1,6 +1,8 @@
 #!/bin/bash
 
 export FLASK_APP=flask_main.py
+export FLASK_ENV=development
+
 SECRETS="secrets.txt"
 
 if [ -s ${SECRETS} ]; then
@@ -10,7 +12,7 @@ else
 fi
 
 if [ -z "$1" ]; then
-    flask run
+    python3 flask_main.py
 else
     flask "$@"
 fi
