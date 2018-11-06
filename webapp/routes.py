@@ -5,7 +5,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from webapp import app
 from webapp import db
 from webapp.forms import LoginForm, RegisterForm, ChangeUserEmailForm, ChangeUserPasswordForm, DeleteUserForm
-from webapp.models import User, UserID
+from webapp.models import User
 
 
 @app.route('/')
@@ -25,12 +25,6 @@ def register():
             is_admin=False)
         user.password_set(form.new_password.data)
 
-        max_id = pow(2, 32)
-        user.id = randint(0, max_id)
-        while UserID.query.filter_by(user_id=user.id).first():
-            user.id = randint(0, max_id)
-
-        db.session.add(UserID(user_id=user.id))
         db.session.add(user)
         db.session.commit()
 

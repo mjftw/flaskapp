@@ -23,12 +23,6 @@ class User(UserMixin, db.Model):
             return False
         return check_password_hash(self.password_hash, password)
 
-
-class UserID(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer)
-
-
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
