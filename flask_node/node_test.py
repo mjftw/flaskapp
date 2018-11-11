@@ -1,16 +1,17 @@
 import threading
-from flask import Flask
 
-from flask_node.nodes import Node
+from flask_node.nodes import Node, SensorNode, ActionNode
 
 
-slave = Node("slave", port=5020)
-master = Node("master", port=5010)
+node = Node("generic", port=5010)
+sensor = SensorNode("sensor", port=5020)
+action = ActionNode("action", port=5030)
 
 def main():
     threads = [
-        threading.Thread(target=slave.run),
-        threading.Thread(target=master.run),
+        threading.Thread(target=node.run),
+        threading.Thread(target=sensor.run),
+        threading.Thread(target=action.run),
     ]
 
     for t in threads:

@@ -7,7 +7,6 @@ Nodes can represent physical entities, such as a temperature sensor,
 or a light switch, or they can be virtual, and represent something
 like a PID controller.
 '''
-import datetime
 
 from flask import jsonify, Flask, request
 
@@ -25,30 +24,26 @@ class Node():
         self.debug = debug
 
         self.start_time = None
-        self.api_methods = ['GET', 'POST']
+        if not hasattr(self, 'methods'):
+            self.methods = ['GET']
 
         self.app.add_url_rule(
-            '/api',
+            '/',
             'api',
             view_func=self.api,
-            methods=self.api_methods)
+            methods=self.methods)
 
     @property
     def info(self):
-        now = datetime.datetime.now()
-        uptime = now - self.start_time
         info = {
             'name': self.app.name,
             'type': self.__class__.__name__,
-            'host': self.host,
+            'host': self.host or 'localhost',
             'port': self.port,
-            'uptime': str(uptime),
-            'request_time': str(now)
         }
         return info
 
     def run(self):
-        self.start_time = datetime.datetime.now()
         self.app.run(host=self.host, port=self.port, debug=self.debug)
 
     def message(self, body=None, **kwargs):
@@ -63,18 +58,8 @@ class Node():
 
         return jsonify(content)
 
-    def jsonify(self):
-        '''
-        Defines a common header for all messages passed by nodes
-        '''
-
     def api(self):
-        if request.method == 'GET':
-            msg = self.message(method='GET')
-        elif request.method == 'POST':
-            msg = self.message(method='POST')
-
-        return msg
+        return self.message()
 
 
 class StemNode(Node):
@@ -99,20 +84,20 @@ class SensorNode(Node):
     '''
 
     def __init__(self, *args, **kwargs):
+        self.mock_reading = 0
         super().__init__(*args, **kwargs)
-        self.values = None
 
-    def read(self, range=None):
-        '''
-        Returns a list of sensor values.
-        @range: A range of sensor values to read. If None, returns all
-        '''
+    def api(self):
+        if request.method == 'GET':
+            return self.message({'sample': self.read_sensor()})
 
-    def flush(self, range=None):
+    def read_sensor(self):
         '''
-        Flushes a range of sensor values from the buffer
-        @range: The range of sensor values to remove. If None, flushes all
+        This function should be overridden with something that reads
+        the value of the sensor, and returns it.
         '''
+        self.mock_reading += 1
+        return self.mock_reading
 
 class ActionNode(Node):
     '''
@@ -121,22 +106,30 @@ class ActionNode(Node):
     '''
 
     def __init__(self, *args, **kwargs):
+        self.methods = ['GET', 'POST']
+        self.value = None
         super().__init__(*args, **kwargs)
 
-    def do(self, value):
+    def api(self):
+        if request.method == 'GET':
+            return self.message({'value': self.value})
+        elif request.method == 'POST':
+            value = request.args.get('value')
+            if value is None:
+                return '', 400
+
+            self.set_value(request.args.get('value'))
+            return str(self.value), 200
+
+    def set_value(self, value):
         '''
-        Trigger an action. E.g. Turn on a plug
+        This function should be overwritten with functionality to trigger
+        an action. E.g. Turn on a plug
+        This function should update self.value to refelect the change made
         @value: The value to set. E.g. On/Off for a plug
         '''
-        pass
-
-    def read(self):
-        '''
-        Get the state of the node, if it has one.
-        E.g. The state of a switch that this node controls
-        '''
-        pass
-
+        self.value = value
+        print(value)
 
 class ControlNode(StemNode):
     '''
