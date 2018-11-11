@@ -17,18 +17,19 @@ class Node():
     I.e. Handles the communication between nodes
     Uses JSON to pass messages
     '''
-    def __init__(self, name, host=None, port=None, debug=None):
+    def __init__(self, name, host=None, port=None, debug=None, path=None):
         self.app = Flask(name)
         self.host = host
         self.port = port
         self.debug = debug
+        self.path = path or '/'
 
         self.start_time = None
         if not hasattr(self, 'methods'):
             self.methods = ['GET']
 
         self.app.add_url_rule(
-            '/',
+            self.path,
             'api',
             view_func=self.api,
             methods=self.methods)
@@ -38,8 +39,10 @@ class Node():
         info = {
             'name': self.app.name,
             'type': self.__class__.__name__,
-            'host': self.host or 'localhost',
-            'port': self.port,
+            'url': "{}:{}{}".format(
+                self.host or 'localhost',
+                self.port,
+                self.path)
         }
         return info
 
@@ -75,6 +78,7 @@ class StemNode(Node):
     '''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
 
 
 class SensorNode(Node):
@@ -115,11 +119,11 @@ class ActionNode(Node):
             return self.message({'value': self.value})
         elif request.method == 'POST':
             value = request.args.get('value')
-            if value is None:
+            if value is None or value == '':
                 return '', 400
 
             self.set_value(request.args.get('value'))
-            return str(self.value), 200
+            return str(self.value)
 
     def set_value(self, value):
         '''
