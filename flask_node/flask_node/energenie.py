@@ -70,7 +70,7 @@ class SmartPlug():
 
         input('Put socket in training mode and press enter')
         for i in range(0, 4):
-            set_socket(socket, 'off')
+            self.set_socket(socket, 'off')
             time.sleep(0.25)
 
         print('Socket should now be trained')
@@ -95,17 +95,18 @@ class SmartPlug():
             # Set K0-K3
             GPIO.output(self.pinmap['k{}'.format(d)], v)
 
-            # Let these settle (required for encoder)
-            time.sleep(0.1)
+        # Let these settle (required for encoder)
+        time.sleep(0.1)
 
-            # Enable modulator
-            GPIO.output(self.pinmap['mod_en'], True)
+        # Enable modulator
+        GPIO.output(self.pinmap['mod_en'], True)
 
-            # Wait a period
-            time.sleep(0.25)
+        # Wait a period
+        time.sleep(0.25)
 
-            # Disable modulator
-            GPIO.output(self.pinmap['mod_en'], False)
+        # Disable modulator
+        GPIO.output(self.pinmap['mod_en'], False)
+
 
     def _check_socket(self, socket):
         if 1 < socket > 4 and socket != 'all':
