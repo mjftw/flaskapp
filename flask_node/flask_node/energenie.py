@@ -93,7 +93,7 @@ class SmartPlug():
 
         for k, v in enumerate(reversed(self.socket_map[socket][state])):
             # Set K0-K3
-            GPIO.output(self.pinmap['k{}'.format(d)], v)
+            GPIO.output(self.pinmap['k{}'.format(k)], bool(int(v)))
 
         # Let these settle (required for encoder)
         time.sleep(0.1)
@@ -109,7 +109,7 @@ class SmartPlug():
 
 
     def _check_socket(self, socket):
-        if 1 < socket > 4 and socket != 'all':
+        if socket != 'all' and (int(socket) < 1 or int(socket) > 4):
             raise RuntimeError("Socket number must be 1-4 or 'all'")
 
     def _gpio_init(self):
