@@ -70,7 +70,7 @@ class SmartPlug():
 
         input('Put socket in training mode and press enter')
         for i in range(0, 4):
-            self.set_socket(socket, 'off')
+            self.set_socket(socket, 'on')
             time.sleep(0.25)
 
         print('Socket should now be trained')
@@ -91,7 +91,7 @@ class SmartPlug():
         if isinstance(socket, int):
             socket = str(socket)
 
-        for k, v in enumerate(reversed(self.socket_map[socket][state])):
+        for k, v in enumerate(self.socket_map[socket][state]):
             # Set K0-K3
             GPIO.output(self.pinmap['k{}'.format(k)], bool(int(v)))
 
