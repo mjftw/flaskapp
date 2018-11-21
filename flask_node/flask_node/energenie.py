@@ -85,7 +85,7 @@ class SmartPlug():
         time.sleep(0.5)
 
 
-    def set_socket(socket, state):
+    def set_socket(self, socket, state):
         self._check_socket(socket)
 
         if isinstance(socket, int):
