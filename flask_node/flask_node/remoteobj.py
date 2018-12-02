@@ -1,6 +1,5 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import inspect
-
 
 class RxClass():
     def __init__(self, name=None, host='localhost', port='5000', debug=False):
@@ -15,12 +14,15 @@ class RxClass():
             self.methods = ['GET']
 
         def get_method_call(m):
-            return str((m, inspect.getargspec(getattr(self, m)).args[1:]))
+            return {m: inspect.getargspec(getattr(self, m)).args[1:]}
 
         def get_methods():
             method_names = [m[0] for m in inspect.getmembers(self, predicate=inspect.ismethod)]
             method_names = filter(lambda m: not (m.startswith('_') or m == 'run_api'), method_names)
-            return str([get_method_call(m)for m in method_names])
+            methods = {}
+            for m in method_names:
+                methods = ({**methods, **get_method_call(m)})
+            return jsonify(methods)
 
         self.app.add_url_rule(
             '/',
@@ -33,7 +35,7 @@ class RxClass():
             func = getattr(self, m)
             al = inspect.getargspec(func).args[1:] or []
             if request.method == 'GET':
-                return get_method_call(m)
+                return jsonify(get_method_call(m))
 
             dl = inspect.getargspec(func).defaults or []
             args_defs = [l for l in al[:len(al)-len(dl)]] + list(zip(al[::-1], dl[::-1]))[::-1]
