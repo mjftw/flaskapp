@@ -32,13 +32,17 @@ class RxClass():
             view_func=get_methods,
             methods=['GET'])
 
-        @self.app.route('/<m>', methods=['GET', 'POST'])
-        def api_method(m):
+        @self.app.route('/<m>', methods=['GET'])
+        def api_discover(m):
             func = getattr(self, m)
             al = inspect.getargspec(func).args[1:] or []
             if request.method == 'GET':
                 return jsonify(get_method_call(m))
 
+        @self.app.route('/<m>', methods=['POST'])
+        def api_call(m):
+            func = getattr(self, m)
+            al = inspect.getargspec(func).args[1:] or []
             dl = inspect.getargspec(func).defaults or []
             args_defs = [l for l in al[:len(al)-len(dl)]] + list(zip(al[::-1], dl[::-1]))[::-1]
 
