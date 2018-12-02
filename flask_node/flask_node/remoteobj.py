@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
 import inspect
+import requests
+
 
 class RxClass():
     def __init__(self, name=None, host='localhost', port='5000', debug=False):
@@ -49,6 +51,35 @@ class RxClass():
 
             return str(func(*args))
 
-
     def run_api(self):
         self.app.run(host=self.host, port=self.port, debug=self.debug)
+
+
+class TxClass():
+    def __init__(self, host='localhost', port='5000'):
+        self.host = host
+        self.port = port
+
+        self.pull_methods()
+
+    @property
+    def url(self):
+        return 'http://{}{}'.format(
+            self.host, ':{}'.format(self.port) if self.port else '')
+
+    def pull_methods(self):
+        r = requests.get(self.url)
+        methods = r.json()
+
+        for name, arg_names in methods.items():
+            setattr(self, name, self._method_factory(name, arg_names))
+
+    def _method_factory(self, name, arg_names):
+        def f(*args):
+                params = dict(zip(arg_names, args))
+                method_url = '{}/{}'.format(self.url, name)
+                r = requests.post(method_url, params=params)
+                return r.text
+
+        f.__name__ = name
+        return f
