@@ -3,7 +3,8 @@ import inspect
 
 
 class RxClass():
-    def __init__(self, name, host='localhost', port='5000', debug=False):
+    def __init__(self, name=None, host='localhost', port='5000', debug=False):
+        name = name or '{}_api'.format(self.__class__.__name__)
         self.app = Flask(name)
         self.host = host or 'localhost'
         self.port = port or '5000'
@@ -30,11 +31,11 @@ class RxClass():
         @self.app.route('/<m>', methods=['GET', 'POST'])
         def api_method(m):
             func = getattr(self, m)
-            al = inspect.getargspec(func).args[1:]
+            al = inspect.getargspec(func).args[1:] or []
             if request.method == 'GET':
                 return get_method_call(m)
 
-            dl = inspect.getargspec(func).defaults
+            dl = inspect.getargspec(func).defaults or []
             args_defs = [l for l in al[:len(al)-len(dl)]] + list(zip(al[::-1], dl[::-1]))[::-1]
 
             args = []
