@@ -17,11 +17,12 @@ class TempSensor():
     def get_value(self):
         attempts = 0
         data = self.raw_data()
-        while 'YES' not in data and attempts < 10:
+        while 'YES' not in data[0] and attempts < 10:
             time.sleep(0.1)
+            attempts += 1
             data = self.raw_data()
 
-        if 'YES' not in data:
+        if 'YES' not in data[0]:
             raise SensorError('CRC error reading sensor')
 
         idx = data[1].find('t=') + 2
