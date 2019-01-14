@@ -29,7 +29,7 @@ class TempSensor():
         if idx == -1:
             raise SensorError('Error reading sensor')
 
-        return (float)(data[1][idx:].strip()/1000)
+        return (float)(data[1][idx:].strip())/1000
 
     def raw_data(self):
         with open(self.read_path, 'r') as f:
