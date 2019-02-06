@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<div class="container">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation"><a href="#graphs" aria-controls="graphs" role="tab" data-toggle="tab">Graphs</a></li>
+        <li role="presentation"><a href="#control" aria-controls="control" role="tab" data-toggle="tab">Control</a></li>
+        <li role="presentation"><a href="#api_nodes" aria-controls="api_nodes" role="tab" data-toggle="tab">API Nodes</a></li>
+        <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane" id="graphs">
+            [graphs content]
+        </div>
+        <div role="tabpanel" class="tab-pane" id="control">
+            [control content]
+        </div>
+        <div role="tabpanel" class="tab-pane" id="api_nodes">
+            <!-- Nodes -->
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Methods</th>
+                        <th scope="col">Variables</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for n in nodes %}
+                        <tr>
+                            <!-- Names -->
+                            <td>
+                                {{ n["name"] }}
+                            </td>
+
+                            <!-- Methods -->
+                            <td>
+                                <div class="btn-group-vertical" role="group" aria_label="{{ n['name'] }}_methods">
+                                    {% for m in n["methods"] %}
+                                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#{{m}}_modal">
+                                            {{ m }}
+                                        </button>
+                                        <!-- Method Modal -->
+                                        <div class="modal fade" id="{{m}}_modal" tabindex="-1" role="dialog" aria-labelledby="{{m}}_modal_label">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                        <h4 class="modal-title" id="{{m}}_modal_label">Make API call: {{n['name']}}.{{m}}()</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        {% if n['methods'][m] %}
+                                                            <form>
+                                                                {% for a in n['methods'][m] %}
+                                                                    <div class="form-group">
+                                                                        <label for="{{n['name']}}_{{m}}_{{a}}">{{a}}</label>
+                                                                        <input type="text" class="form-control" id="{{n['name']}}_{{m}}_{{a}}" placeholder="Enter argument value">
+                                                                    </div>
+                                                                {% endfor %}
+                                                            </form>
+                                                        {% else %}
+                                                            This method takes no arguments
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        {# <button type="button" class="btn btn-primary" id="{{n['name']}}_{{m}}_call}}">Call method</button> #}
+                                                        <button type="button" class="btn btn-primary" data-dismiss="modal">Call method</button>
+                                                        <!-- TODO: Make call method buttom actually make the API call -->
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </td>
+
+                            <!-- Variables -->
+                            <td>
+                                <table class="key-value-table">
+                                    {% for v in n["variables"] %}
+                                        <tr>
+                                            <th>{{v}}: </th>
+                                            <td>{{n["variables"][v]}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+        <div role="tabpanel" class="tab-pane" id="settings">
+            [settings content]
+        </div>
+    </div>
+
+</div>
+{% endblock %}
