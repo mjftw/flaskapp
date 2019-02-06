@@ -1,20 +1,24 @@
 {% extends 'bootstrap/base.html' %}
 
-{% block styles %}
-    <link rel="stylesheet"
-        href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+{% block header %}
+    <head lang="en">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
 {% endblock %}
 
 {% block title%}
     {% if title %}
-        <title> Flaskapp - {{ title }}</title>
+        Flaskapp - {{ title }}
     {% else %}
-        <title> Flaskapp </title>
+        Flaskapp
     {% endif %}
 {% endblock %}
+
 {% block navbar %}
     {% include '_navbar.html' %}
 {% endblock %}
+
 {% block content %}
     <div class="container">
         {% with messages = get_flashed_messages() %}
