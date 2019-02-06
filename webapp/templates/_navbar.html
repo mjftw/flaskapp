@@ -1,24 +1,37 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <ul class="navbar-nav mr-auto">
-        <li class="nav-item {% if request.endpoint == 'index' %} active {% endif %}">
-            <a class="nav-link" href="{{ url_for('index') }}">Home</a>
-        </li>
-
-        {% if not current_user.is_anonymous %}
-        <li class="nav-item {% if request.endpoint == 'user' %} active {% endif %}">
-            <a class="nav-link" href="{{ url_for('user', username=current_user.username) }}">Account</a>
-        </li>
-        {% endif %}
-        {% if current_user.is_anonymous %}
-        <li class="nav-item {% if request.endpoint == 'login' %} active {% endif %}">
-            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
-        </li>
-        {% else %}
-            {% if current_user.is_admin %}
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin') }}">Admin</a></li>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="{{ url_for('index') }}">AutoBrew</a>
+        </div>
+        <ul class="nav navbar-nav navbar-left">
+            <li class="nav-item {% if request.endpoint == 'index' %} active {% endif %}">
+                <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+            </li>
+            {% if not current_user.is_anonymous %}
+            <li class="nav-item {% if request.endpoint == 'user' %} active {% endif %}">
+                <a class="nav-link" href="{{ url_for('user', username=current_user.username) }}">Account</a>
+            </li>
+                {% if current_user.is_admin %}
+                    <li class="nav-item {% if request.endpoint == 'brewcontrol' %} active {% endif %}">
+                        <a class="nav-link" href="{{ url_for('brewcontrol') }}">Brewing Control Pannel</a>
+                    </li>
+                {% endif %}
             {% endif %}
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            {% if current_user.is_anonymous %}
+            <li class="nav-item {% if request.endpoint == 'login' %} active {% endif %}">
+                <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+            </li>
+            {% else %}
+                {% if current_user.is_admin %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin') }}">Admin</a></li>
+                {% endif %}
             <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+            {% endif %}
+        </ul>
+        {% if not current_user.is_anonymous %}
+            <p class="navbar-text navbar-right">Signed in as <a href="{{ url_for('user', username=current_user.username) }}" class="navbar-link">{{ current_user.username }}</a></a></p>
         {% endif %}
-    </ul>
+    </div>
 </nav>
-<br><br><br>
