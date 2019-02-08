@@ -1,7 +1,8 @@
 from netifaces import AF_INET, AF_INET6, AF_LINK, AF_PACKET, AF_BRIDGE
 import netifaces
+from werkzeug import serving
 
-from webapp import app, db
+from webapp import app, db, ssl_ctx
 from webapp.models import User
 
 
@@ -11,8 +12,11 @@ def make_shell_context():
 
 def main():
     ipaddr = netifaces.ifaddresses('wlan0')[AF_INET][0]['addr']
-    # app.run(ssl_context='adhoc')
-    app.run(debug=True, host=ipaddr, port=5000)
+    serving.run_simple(
+        application=app,
+        hostname=ipaddr,
+        port=8443,
+        ssl_context=ssl_ctx)
 
 if __name__ == "__main__":
     main()
