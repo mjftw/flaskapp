@@ -103,7 +103,7 @@ def user(username=''):
 @login_required
 def brewcontrol():
     if not current_user.is_admin:
-        return redirect(url_for('index'))
+        return redirect(url_for('noauth'))
 
     node_urls = [
         'http://192.168.0.210:5010',
@@ -123,16 +123,18 @@ def brewcontrol():
 
 #TODO: Impliment a way of making API calls from within brewing control panel
 @app.route('/brewcontrol/node_api_call')
+@login_required
 def node_api_call():
+    if not current_user.is_admin:
+        return redirect(url_for('noauth'))
+
     url = request.args.get('url')
     method = request.args.get('method')
     method_args = {name[len('arg_'):]: request.args[name] for name in request.args
         if name.startswith('arg_') and request.args[name]}
     if url and method:
         r = requests.post(url + '/' + method, params=method_args)
-        retval = r.text or json.dumps({})
-        print('returning: ' + retval)
-        return retval
+        return r.text or ''
     else:
         return 'Err invalid call', 404
 
