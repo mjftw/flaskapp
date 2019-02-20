@@ -104,28 +104,37 @@ def user(username=''):
 def brewcontrol():
     if not current_user.is_admin:
         return redirect(url_for('index'))
+
     node_urls = [
-        'http://192.168.0.35:5010',
-        'http://192.168.0.35:5020',
-        'http://192.168.0.35:5030'
+        'http://192.168.0.210:5010',
+        'http://192.168.0.210:5020',
+        'http://192.168.0.210:5030'
     ]
+
     api_nodes = []
     for u in node_urls:
         r = requests.get(u)
         t = r.text
         if t:
-            api_nodes.append(json.loads(r.text))
+            data = json.loads(r.text)
+            data['url'] = u
+            api_nodes.append(data)
     return render_template('brewcontrol.html', title='Brewing Control Panel', nodes=api_nodes)
 
 #TODO: Impliment a way of making API calls from within brewing control panel
-# @app.context_processor
-# def utility_processor():
-#     def call_api_node(host, port, method):
-#         if host and port and method:
-#             url = "http://{}:{}/{}".format(host, port, method)
-#             r = requests.post(url)
-#             print('Made API call: {}. Method returned: {}'.format(url, r.text))
-#             return(r.text)
+@app.route('/brewcontrol/node_api_call')
+def node_api_call():
+    url = request.args.get('url')
+    method = request.args.get('method')
+    method_args = {name[len('arg_'):]: request.args[name] for name in request.args
+        if name.startswith('arg_') and request.args[name]}
+    if url and method:
+        r = requests.post(url + '/' + method, params=method_args)
+        retval = r.text or json.dumps({})
+        print('returning: ' + retval)
+        return retval
+    else:
+        return 'Err invalid call', 404
 
 # Dummy route is here so that we can link to the flask-admin page
 @app.route('/admin')
