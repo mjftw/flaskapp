@@ -21,6 +21,7 @@
             [control content]
         </div>
         <div role="tabpanel" class="tab-pane" id="api_nodes">
+        <!-- TODO: Move each tab into its own template file -->
             <!-- Nodes -->
             <table class="table">
                 <thead>
@@ -86,6 +87,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <!-- TODO: Catch API call failures -->
                                         <script>
                                             function {{n['name']}}_{{m}}_call() {
                                                 $("#{{n['name']}}_{{m}}_btn").attr("disabled", "disabled");
