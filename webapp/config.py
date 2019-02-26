@@ -14,10 +14,10 @@ class Config():
             print('Reading config file {}'.format(self.config_file))
             self.config = configparser.ConfigParser()
             self.config.read(self.config_file)
-            if 'FLASK' in self.config:
-                for var in self.config['FLASK']:
+            for section in self.config:
+                for var in self.config[section]:
                     var = var.upper()
-                    value = self.config['FLASK'][var]
+                    value = self.config[section][var]
                     print('Setting {} = {} (from {})'.format(var, value, self.config_file))
                     setattr(self, var, value)
                     os.environ[var] = str(value)
@@ -26,6 +26,8 @@ class Config():
         self.source_config('SECRET_KEY', "ep2gz+zx)edg2LM{")
         self.source_config('SQLALCHEMY_DATABASE_URI', 'sqlite:///' + os.path.join(basedir, 'app.db'))
         self.source_config('SQLALCHEMY_TRACK_MODIFICATIONS', False)
+        self.source_config('SSL_CERT', os.path.join(basedir, 'cert.pem'))
+        self.source_config('SSL_KEY', os.path.join(basedir, 'privkey.pem'))
 
     def source_config(self, name, default=None, export_env=True):
         if hasattr(self, name):

@@ -105,11 +105,8 @@ def brewcontrol():
     if not current_user.is_admin:
         return redirect(url_for('noauth'))
 
-    node_urls = [
-        'http://192.168.0.210:5010',
-        'http://192.168.0.210:5020',
-        'http://192.168.0.210:5030'
-    ]
+    # Get API node URLs from config
+    node_urls = [app.config[k] for k in app.config if k.startswith('NODEURL')]
 
     api_nodes = []
     for u in node_urls:

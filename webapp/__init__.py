@@ -25,7 +25,9 @@ admin.add_view(UserIsAdminModelView(models.User, db.session))
 project_root = os.path.abspath(os.path.join(os.path.realpath(__file__), os.pardir, os.pardir))
 
 # SSL cert & key should be symlinked to project root dir
-ssl_crt = os.path.join(project_root, 'cert.pem')
-ssl_key = os.path.join(project_root, 'privkey.pem')
+ssl_crt = os.environ.get('SSL_CERT')
+ssl_key = os.environ.get('SSL_KEY')
+if not os.path.isfile(ssl_crt) or not os.path.isfile(ssl_crt):
+    raise RuntimeError('Cannot find both SSL key and cert')
 ssl_ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
 ssl_ctx.load_cert_chain(certfile=ssl_crt, keyfile=ssl_key)
