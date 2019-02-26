@@ -1,0 +1,112 @@
+<!-- Nodes -->
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Methods</th>
+            <th scope="col">Variables</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for n in nodes %}
+            <tr>
+                <!-- Names -->
+                <td>
+                    {{ n["name"] }}
+                </td>
+
+                <!-- Methods -->
+                <td>
+                    <div class="btn-group-vertical" role="group" aria_label="{{ n['name'] }}_methods">
+                        {% for m in n["methods"] %}
+                            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#{{m}}_modal">
+                                {{ m }}
+                            </button>
+                            <!-- Method Modal -->
+                            <div class="modal fade" id="{{m}}_modal" tabindex="-1" role="dialog" aria-labelledby="{{m}}_modal_label">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title" id="{{m}}_modal_label">{{n['name']}}.{{m}}()</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">Arguments</div>
+                                                <div class="panel-body">
+                                                    {% if n['methods'][m] %}
+                                                        <form>
+                                                            {% for a in n['methods'][m] %}
+                                                                <div class="form-group">
+                                                                    <label for="{{n['name']}}_{{m}}_{{a}}">{{a}}</label>
+                                                                    <input type="text" class="form-control" id="{{n['name']}}_{{m}}_{{a}}" placeholder="Enter argument value">
+                                                                </div>
+                                                            {% endfor %}
+                                                        </form>
+                                                    {% else %}
+                                                        <p>None</p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">Return Value</div>
+                                                <div class="panel-body">
+                                                    <p id="{{n['name']}}_{{m}}_return"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" id="{{n['name']}}_{{m}}_btn" class="btn btn-primary" onclick="{{n['name']}}_{{m}}_call()">Call method</button>
+                                            <!-- TODO: Make call method buttom actually make the API call -->
+                                            <button type="button" class="btn btn-default" onclick="{{n['name']}}_{{m}}_clear()" data-dismiss="modal">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- TODO: Catch API call failures -->
+                            <script>
+                                function {{n['name']}}_{{m}}_call() {
+                                    $("#{{n['name']}}_{{m}}_btn").attr("disabled", "disabled");
+                                    $("#{{n['name']}}_{{m}}_return").text('Calling method...');
+                                    $.ajax({
+                                        type: "GET",
+                                        url: "{{url_for('node_api_call')}}",
+                                        data: {
+                                            url: "{{n['url']}}",
+                                            method : "{{m}}",
+                                            {% for a in n['methods'][m] %}
+                                                arg_{{a}}: $("#{{n['name']}}_{{m}}_{{a}}").val(),
+                                            {% endfor %}
+                                        },
+                                        success: function(data) {
+                                            $("#{{n['name']}}_{{m}}_return").text(data);
+                                            $("#{{n['name']}}_{{m}}_btn").removeAttr("disabled");
+                                        },
+                                        dataType: 'text',
+                                    });
+                                };
+                                function {{n['name']}}_{{m}}_clear() {
+                                    $("#{{n['name']}}_{{m}}_return").text('');
+                                    $("#{{n['name']}}_{{m}}_btn").removeAttr("disabled");
+                                };
+                            </script>
+                        {% endfor %}
+                    </div>
+                </td>
+
+                <!-- Variables -->
+                <!-- TODO: Make these reload on node method call submission -->
+                <td>
+                    <table class="key-value-table">
+                        {% for v in n["variables"] %}
+                            <tr>
+                                <th>{{v}}: </th>
+                                <td>{{n["variables"][v]}}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
