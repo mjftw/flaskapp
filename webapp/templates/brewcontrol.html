@@ -27,4 +27,42 @@
         </div>
     </div>
 </div>
+
+<script>
+    function graphs_active() {
+        alert('graphs_active');
+    }
+    function control_active() {
+        alert('control_active');
+    }
+    function settings_active() {
+        alert('settings_active');
+    }
+</script>
+
+<script>
+    $(document).ready(function(){
+        $(".nav-tabs a").click(function(){
+            $(this).tab('show');
+        });
+        $('.nav-tabs a').on('shown.bs.tab', function(event){
+            var tab_target = $(event.target).text();
+            switch(tab_target) {
+                case "Graphs":
+                    graphs_active();
+                    break;
+                case "Control":
+                    control_active();
+                    break;
+                case "API Nodes":
+                    api_nodes_active();
+                    break;
+                case "Settings":
+                    settings_active();
+                    break;
+            }
+        });
+    });
+</script>
+
 {% endblock %}
