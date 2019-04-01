@@ -16,6 +16,7 @@ def main():
         application=app,
         hostname=ipaddr,
         port=8443,
+        threaded=True,
         ssl_context=ssl_ctx)
 
 if __name__ == "__main__":
