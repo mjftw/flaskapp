@@ -118,7 +118,6 @@ def brewcontrol():
             api_nodes.append(data)
     return render_template('brewcontrol.html', title='Brewing Control Panel', nodes=api_nodes)
 
-#TODO: Impliment a way of making API calls from within brewing control panel
 @app.route('/brewcontrol/node_api_call')
 @login_required
 def node_api_call():
@@ -130,16 +129,11 @@ def node_api_call():
     method_args = {name[len('arg_'):]: request.args[name] for name in request.args
         if name.startswith('arg_') and request.args[name]}
     if url and method:
-        r = requests.post(url + '/' + method, params=method_args)
+        r = requests.post(url + '/' + method, params=method_args or None)
         return r.text or ''
     else:
         return 'Err invalid call', 404
 
-# Dummy route is here so that we can link to the flask-admin page
-@app.route('/admin')
-def admin():
-    flash('Admin panel unavailable')
-    return redirect(url_for('index'))
 
 @app.route('/noauth')
 def noauth():
