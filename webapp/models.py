@@ -26,3 +26,14 @@ class User(UserMixin, db.Model):
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
+
+class SensorData(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sensor_name = db.Column(db.String(64))
+    value = db.Column(db.Float)
+    time = db.Column(db.Float)
+
+    def __repr__(self):
+        return '<SensorData {} [{}, {}]>'.format(
+            self.sensor_name, self.value, self.time)

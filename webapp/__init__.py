@@ -21,6 +21,7 @@ from webapp.admin_views import UserIsAdminIndexView, UserIsAdminModelView
 
 admin = Admin(app, index_view=UserIsAdminIndexView())
 admin.add_view(UserIsAdminModelView(models.User, db.session))
+admin.add_view(UserIsAdminModelView(models.SensorData, db.session))
 
 project_root = os.path.abspath(os.path.join(os.path.realpath(__file__), os.pardir, os.pardir))
 
