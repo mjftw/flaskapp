@@ -16,7 +16,7 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 bootstrap = Bootstrap(app)
 
-from webapp import routes, errors, models
+from webapp import routes, api, errors, models
 from webapp.admin_views import UserIsAdminIndexView, UserIsAdminModelView
 
 admin = Admin(app, index_view=UserIsAdminIndexView())

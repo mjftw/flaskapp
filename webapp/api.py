@@ -24,3 +24,34 @@ def node_api_call():
         return r.text or ''
     else:
         return 'Err invalid call', 404
+
+@app.route('/api/get_data_in_range')
+@login_required
+def get_data_in_range():
+    if not current_user.is_admin:
+        return 'Err not admin', 401
+
+    date_format = '%d-%m-%y-%H-%M-%S'
+
+    start = request.args.get('start')
+    end = request.args.get('end')
+    sensor_name = request.args.get('sensor_name')
+
+    if not start or not end or not sensor_name:
+        return 'Err invalid call', 400
+
+    start_date = datetime.strptime(start, date_format)
+    end_date = datetime.strptime(end, date_format)
+
+    data = [
+        {
+            'value': d.value,
+            'date': datetime.strftime(d.date, date_format)
+        } 
+        for d in db.session.query(SensorData).filter(
+            SensorData.sensor_name==sensor_name).filter(
+                SensorData.date.between(start_date, end_date)).all()
+    ]
+
+    return json.dumps(data), 200
+   

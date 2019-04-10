@@ -4,13 +4,13 @@ import threading
 from werkzeug import serving
 
 from webapp import app, db, ssl_ctx
-from webapp.models import User
+from webapp.models import User, SensorData
 from webapp.logger import SensorLogger
 
 
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'User': User}
+    return {'db': db, 'User': User, 'SensorData': SensorData}
 
 def main():
     ipaddr = netifaces.ifaddresses('wlan0')[AF_INET][0]['addr']
@@ -24,7 +24,7 @@ def main():
             tx_port=5010, 
             sample_period_s=60, 
             name='TempSensorLogger', 
-            sensor_db_name='fv-temperature', 
+            sensor_db_name='brew-fridge-temperature', 
             sensor_ip='192.168.0.210', 
             sensor_port=5010, 
             sensor_read_method='get_value' 
