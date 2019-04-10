@@ -1,4 +1,4 @@
-import time
+from datetime import datetime
 
 from flask_node.remoteobj import TxClassLooping, RxReadSimple
 
@@ -31,7 +31,7 @@ class SensorLogger(TxClassLooping, RxReadSimple):
         data = SensorData(
             sensor_name=self.sensor_db_name,
             value=value,
-            time=time.time())
+            date=datetime.now())
 
         db.session.add(data)
         db.session.commit()

@@ -32,8 +32,8 @@ class SensorData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sensor_name = db.Column(db.String(64))
     value = db.Column(db.Float)
-    time = db.Column(db.Float)
+    date = db.Column(db.DateTime)
 
     def __repr__(self):
         return '<SensorData {} [{}, {}]>'.format(
-            self.sensor_name, self.value, self.time)
+            self.sensor_name, self.value, self.date)
