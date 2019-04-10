@@ -25,16 +25,16 @@
                 <td>
                     <div class="btn-group-vertical" role="group" aria_label="{{ n['name'] }}_methods">
                         {% for m in n["methods"] %}
-                            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#{{m}}_modal">
+                            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#{{n['name']}}_{{m}}_modal">
                                 {{ m }}
                             </button>
                             <!-- Method Modal -->
-                            <div class="modal fade" id="{{m}}_modal" tabindex="-1" role="dialog" aria-labelledby="{{m}}_modal_label">
+                            <div class="modal fade" id="{{n['name']}}_{{m}}_modal" tabindex="-1" role="dialog" aria-labelledby="{{n['name']}}_{{m}}_modal_label">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                            <h4 class="modal-title" id="{{m}}_modal_label">{{n['name']}}.{{m}}()</h4>
+                                            <h4 class="modal-title" id="{{n['name']}}_{{m}}_modal_label">{{n['name']}}.{{m}}()</h4>
                                         </div>
                                         <div class="modal-body">
                                             <div class="panel panel-default">
