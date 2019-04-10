@@ -14,7 +14,7 @@
     <!-- Tab panes -->
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane" id="graphs">
-            [graphs content]
+            {% include "brewcontrol_tabs/graph_tab.html" %}
         </div>
         <div role="tabpanel" class="tab-pane" id="control">
             [control content]
@@ -29,14 +29,11 @@
 </div>
 
 <script>
-    function graphs_active() {
-        alert('graphs_active');
-    }
     function control_active() {
-        alert('control_active');
+        // alert('control_active');
     }
     function settings_active() {
-        alert('settings_active');
+        // alert('settings_active');
     }
 </script>
 
