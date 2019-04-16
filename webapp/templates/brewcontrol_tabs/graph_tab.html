@@ -3,11 +3,19 @@
 <script>
     function graphs_active() {
         // TODO: Get these from forms
-        var sensor_name = "brew-fridge-temperature";
-        var start = "2019-04-15 21:16:51";
-        var end = "2019-04-16 22:16:51";
+        setup_filters();
+    };
 
-        render_graph(sensor_name, start, end);
+    function setup_filters() {
+        $('#render_button').on('click', function(event) {
+            var sensor_name = "brew-fridge-temperature";
+            // var start = "2019-04-15 21:16:51";
+            // var end = "2019-04-16 22:16:51";
+
+            var start = $("#start_date_text").val()
+            var end = $("#end_date_text").val()
+            render_graph(sensor_name, start, end);
+        });
     };
 
     function render_graph(sensor_name, start, end) {
@@ -74,9 +82,11 @@
 
 <div class="row">
     <div class="col">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                [data selection filters go here]
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Start (YYYY-MM-DD HH:mm:ss)" id="start_date_text" aria-label="start_date" aria-describedby="basic-addon2">
+            <input type="text" class="form-control" placeholder="End (YYYY-MM-DD HH:mm:ss)" id="end_date_text" aria-label="end_date" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" id="render_button" type="button">Render</button>
             </div>
         </div>
     </div>
