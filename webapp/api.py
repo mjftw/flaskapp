@@ -31,7 +31,9 @@ def get_data_in_range():
     if not current_user.is_admin:
         return 'Err not admin', 401
 
-    date_format = '%d-%m-%y-%H-%M-%S'
+    date_format = '%Y-%m-%d %H:%M:%S'
+
+    print(datetime.strftime(datetime.now(), date_format))
 
     start = request.args.get('start')
     end = request.args.get('end')
@@ -45,8 +47,8 @@ def get_data_in_range():
 
     data = [
         {
-            'value': d.value,
-            'date': datetime.strftime(d.date, date_format)
+            'x': datetime.strftime(d.date, date_format),
+            'y': d.value
         } 
         for d in db.session.query(SensorData).filter(
             SensorData.sensor_name==sensor_name).filter(

@@ -1,19 +1,86 @@
+<!-- Chart.js-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
 <script>
     function graphs_active() {
+        // TODO: Get these from forms
+        var sensor_name = "brew-fridge-temperature";
+        var start = "2019-04-15 21:16:51";
+        var end = "2019-04-16 22:16:51";
+
+        var time_format = 'YYYY-MM-DD HH:mm:ss';
+
         $.ajax({
             type: "GET",
             url: "{{url_for('get_data_in_range')}}",
             data: {
-                // Have this come from form menus
-                sensor_name: "brew-fridge-temperature",
-                start: "08-04-19-21-00-00",
-                end: "08-04-19-22-00-00"
+                sensor_name: sensor_name,
+                start: start,
+                end: end
             },
             success: function(data) {
+                data = data.map(
+                        function (d) {
+                            return {
+                                x: new Date(d['x']),
+                                y: d['y']
+                            }
+                        });
                 // Graph our data here
-                alert(JSON.stringify(data[0], null, 2))
+                var ctx = $('#sensorDataChart');
+                var config = {
+                    type: 'line',
+                    data: {
+                        datasets: [{
+                            label: sensor_name,
+                            data: data
+                        }]
+                    },
+                    options: {
+                        title: {
+                            text: 'My Title'
+                        },
+                        scales: {
+                            xAxes: [{
+                                type: 'time',
+                                time: {
+                                    parser: time_format,
+                                    tooltipFormat: 'll HH:mm'
+                                },
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Date'
+                                }
+                            }],
+                            yAxes: [{
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Temperature (°C)'
+                                }
+                            }]
+                        },
+                    }
+                };
+
+                var chart = new Chart(ctx, config);    
             },
             dataType: 'json',
         });
     }
 </script>
+
+<div class="row">
+    <div class="col">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                [data selection filters go here]
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <canvas id="sensorDataChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
