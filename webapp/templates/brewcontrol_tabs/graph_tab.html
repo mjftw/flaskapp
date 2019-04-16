@@ -7,6 +7,10 @@
         var start = "2019-04-15 21:16:51";
         var end = "2019-04-16 22:16:51";
 
+        render_graph(sensor_name, start, end);
+    };
+
+    function render_graph(sensor_name, start, end) {
         var time_format = 'YYYY-MM-DD HH:mm:ss';
 
         $.ajax({
@@ -61,11 +65,11 @@
                     }
                 };
 
-                var chart = new Chart(ctx, config);    
+                var chart = new Chart(ctx, config);
             },
             dataType: 'json',
         });
-    }
+    };
 </script>
 
 <div class="row">
