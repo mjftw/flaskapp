@@ -1,6 +1,9 @@
 <!-- Chart.js-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
 <script>
+    // ChartJS object
+    var chart = null;
+
     function graphs_active() {
         // TODO: Get these from forms
         setup_filters();
@@ -9,11 +12,9 @@
     function setup_filters() {
         $('#render_button').on('click', function(event) {
             var sensor_name = "brew-fridge-temperature";
-            // var start = "2019-04-15 21:16:51";
-            // var end = "2019-04-16 22:16:51";
-
             var start = $("#start_date_text").val()
             var end = $("#end_date_text").val()
+
             render_graph(sensor_name, start, end);
         });
     };
@@ -38,7 +39,6 @@
                             }
                         });
                 // Graph our data here
-                var ctx = $('#sensorDataChart');
                 var config = {
                     type: 'line',
                     data: {
@@ -73,7 +73,17 @@
                     }
                 };
 
-                var chart = new Chart(ctx, config);
+                var ctx = $('#sensorDataChart');
+
+                if(chart != null) {
+                    chart.destroy();
+                    chart = null;
+                }
+
+                chart = new Chart(ctx, config);
+            },
+            error: function(jqxHR, textStatus, errorThrown) {
+                alert("Request error (invalid date format?): " + textStatus + ", " + errorThrown);
             },
             dataType: 'json',
         });
