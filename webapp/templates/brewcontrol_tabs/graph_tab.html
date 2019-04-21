@@ -1,7 +1,7 @@
 <!-- Chart.js-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
 <script>
-    // ChartJS object
+    // ChartJS object placeholder
     var chart = null;
 
     function graphs_active() {
@@ -13,14 +13,45 @@
         $('#render_button').on('click', function(event) {
             var sensor_name = "brew-fridge-temperature";
             var start = $("#start_date_text").val()
-            var end = $("#end_date_text").val()
+            var end = null;
+
+            // No end date if live data
+            if(!$('#live_checkbox').prop('checked'))
+                end = $("#end_date_text").val();
 
             render_graph(sensor_name, start, end);
         });
+
+        $("#end_date_text").prop('disabled', $('#live_checkbox').prop('checked'));
+
+        $('#live_checkbox').change(function() {
+            // Disable end date input if live data
+            $("#end_date_text").prop('disabled', $(this).prop('checked'));
+        });
+    };
+
+    function pad2(num) {
+        if(num < 10)
+            num = '0' + num
+        return num
+    };
+
+    function date_to_str(date) {
+        return '' + date.getFullYear() + '-' + pad2(date.getMonth() + 1) + '-' +
+            pad2(date.getDate()) + ' ' + pad2(date.getHours()) + ':' + pad2(date.getMinutes()) +
+            ':' + pad2(date.getSeconds());
     };
 
     function render_graph(sensor_name, start, end) {
         var time_format = 'YYYY-MM-DD HH:mm:ss';
+        var live = false;
+
+        if(end == null) {
+            live = true;
+            end = new Date();
+            end = date_to_str(end);
+        }
+        else
 
         $.ajax({
             type: "GET",
@@ -38,7 +69,7 @@
                                 y: d['y']
                             }
                         });
-                // Graph our data here
+
                 var config = {
                     type: 'line',
                     data: {
@@ -95,6 +126,10 @@
         <div class="input-group mb-3">
             <input type="text" class="form-control" placeholder="Start (YYYY-MM-DD HH:mm:ss)" id="start_date_text" aria-label="start_date" aria-describedby="basic-addon2">
             <input type="text" class="form-control" placeholder="End (YYYY-MM-DD HH:mm:ss)" id="end_date_text" aria-label="end_date" aria-describedby="basic-addon2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="live_checkbox">
+                <label class="form-check-label" for="live_checkbox">Live</label>
+            </div>
             <div class="input-group-append">
                 <button class="btn btn-outline-secondary" id="render_button" type="button">Render</button>
             </div>
