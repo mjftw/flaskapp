@@ -19,7 +19,10 @@
             if(!$('#live_checkbox').prop('checked'))
                 end = $("#end_date_text").val();
 
-            render_graph(sensor_name, start, end);
+            // Disable render button while we render graph
+            $(this).prop('disabled', true);
+
+            render_graph(sensor_name, start, end, render_done);
         });
 
         $("#end_date_text").prop('disabled', $('#live_checkbox').prop('checked'));
@@ -28,6 +31,11 @@
             // Disable end date input if live data
             $("#end_date_text").prop('disabled', $(this).prop('checked'));
         });
+    };
+
+    function render_done() {
+        // Got data, re-enable render button
+        $('#render_button').prop('disabled', false);
     };
 
     function pad2(num) {
@@ -42,7 +50,10 @@
             ':' + pad2(date.getSeconds());
     };
 
-    function render_graph(sensor_name, start, end) {
+    function render_graph(sensor_name, start, end, complete_callback) {
+        // request complete callback function optional
+        complete_callback = complete_callback || null
+
         var time_format = 'YYYY-MM-DD HH:mm:ss';
         var live = false;
 
@@ -51,7 +62,6 @@
             end = new Date();
             end = date_to_str(end);
         }
-        else
 
         $.ajax({
             type: "GET",
@@ -116,6 +126,7 @@
             error: function(jqxHR, textStatus, errorThrown) {
                 alert("Request error (invalid date format?): " + textStatus + ", " + errorThrown);
             },
+            complete: complete_callback,
             dataType: 'json',
         });
     };
