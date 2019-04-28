@@ -7,13 +7,13 @@ from webapp import db
 
 class SensorLogger(TxClassLooping, RxReadSimple):
     def __init__(self, tx_ip, tx_port, sample_period_s, name, sensor_db_name,
-            sensor_ip, sensor_port, sensor_read_method,
-            sensor_read_args=None):
+            sensor_ip, sensor_port, sensor_read_method, sensor_read_args=None,
+            log_repeated_data=False):
         RxReadSimple.__init__(self,
             remote_host=sensor_ip,
             remote_port=sensor_port,
             remote_method=sensor_read_method,
-            remote_args=sensor_read_args or (), 
+            remote_args=sensor_read_args or (),
             callback=self._save_to_db
         )
         TxClassLooping.__init__(self,
@@ -26,15 +26,24 @@ class SensorLogger(TxClassLooping, RxReadSimple):
         )
 
         self.sensor_db_name = sensor_db_name
+        self.log_repeated_data = log_repeated_data
+
+    @property
+    def sample_period_s(self):
+        return 
 
     def _save_to_db(self, value):
-        data = SensorData(
-            sensor_name=self.sensor_db_name,
-            value=value,
-            date=datetime.now())
+        last_value = db.session.query(
+            SensorData).order_by(SensorData.id.desc()).first().value
+        print('new [{}], last[{}]'.format(value, last_value))
+        if value != last_value or self.log_repeated_data:
+            data = SensorData(
+                sensor_name=self.sensor_db_name,
+                value=value,
+                date=datetime.now())
 
-        db.session.add(data)
-        db.session.commit()
+            db.session.add(data)
+            db.session.commit()
 
     @property
     def sample_period(self):
