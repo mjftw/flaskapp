@@ -1,6 +1,9 @@
 # Readme
 
-A simple web app, for the purposes of getting to grips with Flask.
+Flask based simple web app for viewing the status of and controlling embedded devices, connected using the code in the [flask_node project](https://github.com/mjftw/flask_node).
+UI is based on bootstrap, and the tool uses AJAX to sent and receive data from the control nodes.
+This app was created while learning Flask.
+
 
 ## Setup
 To install the required packaged run:
